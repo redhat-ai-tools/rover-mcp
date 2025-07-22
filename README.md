@@ -39,3 +39,16 @@ Example configuration for running with Podman:
   }
 }
 ```
+# Manual steps to test
+
+```
+python3 -m venv venv
+source venv/bin/activate && pip install -r requirements.txt
+
+source venv/bin/activate && python test_client.py
+```
+# To Check if mcp server is already running
+
+```
+ps aux | grep mcp_server.py
+```
