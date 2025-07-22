@@ -1,6 +1,6 @@
 # mcp-server for Rover api
 
-MCP (ModelContextProvider) server template
+Rover MCP (ModelContextProvider) server
 
 ---
 
