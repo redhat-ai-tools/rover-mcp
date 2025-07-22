@@ -11,6 +11,16 @@
         "CERT_FILE": "sa-cert.crt",
         "KEY_FILE": "privkey.pem"
       }
+    },
+    "jira-snowflake": {
+      "command": "python3",
+      "args": [
+        "/path/to/jira-mcp-snowflake/mcp_server.py"
+      ],
+      "cwd": "/path/to/jira-mcp-snowflake",
+      "env": {
+        "MCP_TRANSPORT": "stdio"
+      }
     }
   }
 } 

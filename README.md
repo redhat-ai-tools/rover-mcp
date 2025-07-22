@@ -1,48 +1,44 @@
 # Rover MCP Server
 
-MCP (ModelContextProvider) server for querying Red Hat internal groups API using client certificate authentication.
+Red Hat internal groups (rover) MCP server that provides access to internal group information and member data.
 
-## Features
+## Architecture
 
-- **rover_group**: Retrieve information about Red Hat internal groups by name
-- Client certificate authentication for secure API access
-- Proper error handling for common scenarios (404, 403, certificate issues)
+This MCP server focuses specifically on Red Hat internal groups (rover) data. For JIRA project analysis, use the separate JIRA MCP server alongside this one. The LLM can choose which tools to use based on the query requirements.
 
-## Prerequisites
+## Available Tools
 
-- Client certificate (`sa-cert.crt`) and private key (`privkey.pem`) files
-- Access to Red Hat internal groups API
+- `rover_group(group_name)` - Get information about a specific Red Hat internal group
+- `get_comprehensive_member_profile(member_id)` - Get member profile with rover group context
+- `rover_integration_help()` - Get help and integration guidance
 
-## Building locally
+## Setup
 
-To build the container image locally using Podman, run:
+1. **Prerequisites:**
+   - Valid Red Hat certificates (`sa-cert.crt` and `privkey.pem`)
+   - Python 3.8+
+   - Required dependencies (`pip install -r requirements.txt`)
 
-```sh
-podman build -t rover-mcp:latest .
-```
-
-This will create a local image named `rover-mcp:latest` that you can use to run the server.
-
-## Running with Podman or Docker
-
-Example configuration for running with Podman:
+2. **Configuration:**
+   Add both rover and JIRA MCP servers to your MCP configuration:
 
 ```json
 {
   "mcpServers": {
     "rover": {
-      "command": "podman",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-v", "./sa-cert.crt:/app/sa-cert.crt:ro",
-        "-v", "./privkey.pem:/app/privkey.pem:ro",
-        "-e", "CERT_FILE=/app/sa-cert.crt",
-        "-e", "KEY_FILE=/app/privkey.pem",
-        "-e", "MCP_TRANSPORT=stdio",
-        "localhost/rover-mcp:latest"
-      ],
+      "command": "python3",
+      "args": ["/path/to/rover-mcp/mcp_server.py"],
+      "cwd": "/path/to/rover-mcp",
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "CERT_FILE": "sa-cert.crt",
+        "KEY_FILE": "privkey.pem"
+      }
+    },
+    "jira-snowflake": {
+      "command": "python3", 
+      "args": ["/path/to/jira-mcp-snowflake/mcp_server.py"],
+      "cwd": "/path/to/jira-mcp-snowflake",
       "env": {
         "MCP_TRANSPORT": "stdio"
       }
@@ -51,44 +47,38 @@ Example configuration for running with Podman:
 }
 ```
 
-## Tools
+## Usage Examples
 
-### rover_group
-
-Retrieve information about a Red Hat internal group.
-
-**Parameters:**
-- `group_name` (string, required): The name of the group to retrieve information for
-
-**Example usage:**
-```bash
-# Using the equivalent curl command that this tool replicates:
-curl -H "Accept: application/json" --cert sa-cert.crt --key privkey.pem \
-  -X GET https://internal-groups.iam.redhat.com/v1/groups/<group-name-test>
+### Rover Group Analysis
+```
+rover_group('sp-ai-support-chatbot')
 ```
 
-**Returns:**
-- Success: Group information as JSON
-- Error cases:
-  - Group not found (404)
-  - Access denied (403)
-  - Certificate file missing
-  - Other HTTP errors
+### Combined Analysis Workflow
+1. Use `rover_group()` to get group information
+2. Use JIRA MCP tools (`list_jira_issues()`, `get_jira_project_summary()`) for project data  
+3. LLM combines results for comprehensive analysis
 
-## Environment Variables
+### Member Profile
+```
+get_comprehensive_member_profile('member-id')
+```
 
-- `CERT_FILE`: Path to the client certificate file (default: `sa-cert.crt`)
-- `KEY_FILE`: Path to the private key file (default: `privkey.pem`)
-- `MCP_TRANSPORT`: Transport method for MCP communication (default: `stdio`)
+## Integration Benefits
 
-## Local Development
+- **Clean Separation**: Each MCP server handles its domain expertise
+- **LLM Choice**: The assistant can choose appropriate tools for each query
+- **Better Reliability**: No complex internal MCP-to-MCP calls
+- **Error Handling**: Each server handles its own errors independently
 
-1. Ensure you have the required certificate files in the project directory
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the server: `python mcp_server.py`
+## Development
 
-## Security Notes
+Run the server:
+```bash
+python3 mcp_server.py
+```
 
-- Keep certificate and private key files secure
-- Never commit certificate files to version control
-- Use read-only volume mounts when running in containers
+Test with the MCP client:
+```bash
+python3 test_client.py
+```
