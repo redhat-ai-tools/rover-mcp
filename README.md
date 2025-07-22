@@ -1,4 +1,4 @@
-# rover-mcp
+# mcp-server for Rover api
 
 Rover MCP (ModelContextProvider) server
 
@@ -9,10 +9,10 @@ Rover MCP (ModelContextProvider) server
 To build the container image locally using Podman, run:
 
 ```sh
-podman build -t mcp-server-template:latest .
+podman build -t rover-mcp:latest .
 ```
 
-This will create a local image named `mcp-server-template:latest` that you can use to run the server.
+This will create a local image named `rover-mcp:latest` that you can use to run the server.
 
 ## Running with Podman or Docker
 
@@ -28,16 +28,27 @@ Example configuration for running with Podman:
         "-i",
         "--rm",
         "-e", "API_BASE_URL",
-        "-e", "API_KEY",
         "-e", "MCP_TRANSPORT",
-        "localhost/mcp-server-template:latest"
+        "localhost/rover-mcp:latest"
       ],
       "env": {
-        "API_BASE_URL": "https://api.example.com",
-        "API_KEY": "REDACTED",
+        "API_BASE_URL": "https://internal-groups.iam.redhat.com/v1",
         "MCP_TRANSPORT": "stdio"
       }
     }
   }
 }
+```
+# Manual steps to test
+
+```
+python3 -m venv venv
+source venv/bin/activate && pip install -r requirements.txt
+
+source venv/bin/activate && python test_client.py
+```
+# To Check if mcp server is already running
+
+```
+ps aux | grep mcp_server.py
 ```
