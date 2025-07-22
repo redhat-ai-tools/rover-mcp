@@ -1,6 +1,6 @@
-# mcp-server template
+# rover-mcp
 
-MCP (ModelContextProvider) server template
+Rover MCP (ModelContextProvider) server
 
 ---
 
