@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "rover": {
+      "command": "python3",
+      "args": [
+        "/Users/dhshah/hackathon_mcp/rover-mcp/mcp_server.py"
+      ],
+      "cwd": "/Users/dhshah/hackathon_mcp/rover-mcp",
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "CERT_FILE": "sa-cert.crt",
+        "KEY_FILE": "privkey.pem"
+      }
+    }
+  }
+} 
