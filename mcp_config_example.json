@@ -2,9 +2,7 @@
   "mcpServers": {
     "rover": {
       "command": "python3",
-      "args": [
-        "/Users/dhshah/hackathon_mcp/rover-mcp/mcp_server.py"
-      ],
+      "args": ["/Users/dhshah/hackathon_mcp/rover-mcp/mcp_server.py"],
       "cwd": "/Users/dhshah/hackathon_mcp/rover-mcp",
       "env": {
         "MCP_TRANSPORT": "stdio",
@@ -12,15 +10,11 @@
         "KEY_FILE": "privkey.pem"
       }
     },
-    "jira-snowflake": {
-      "command": "python3",
-      "args": [
-        "/path/to/jira-mcp-snowflake/mcp_server.py"
-      ],
-      "cwd": "/path/to/jira-mcp-snowflake",
-      "env": {
-        "MCP_TRANSPORT": "stdio"
+    "jira-mcp-snowflake": {
+      "url": "https://jira-mcp-snowflake.mcp-playground-poc.devshift.net/sse",
+      "headers": {
+        "X-Snowflake-Token": "token"
       }
     }
   }
-} 
+}
