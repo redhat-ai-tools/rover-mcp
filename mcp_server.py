@@ -71,54 +71,6 @@ async def rover_group(group_name: str) -> dict[str, Any]:
     except Exception as e:
         return {"error": f"Request failed: {str(e)}"}
 
-
-@mcp.tool()
-async def get_comprehensive_member_profile(member_id: str) -> dict[str, Any]:
-    """
-    Get complete member profile including rover groups and JIRA projects in one comprehensive call.
-    This tool minimizes user interaction by gathering all information internally.
-    
-    Args:
-        member_id: The Red Hat ID of the member to analyze
-        
-    Returns:
-        Complete member profile with groups, JIRA projects, and formatted summary
-    """
-    if not member_id:
-        raise ValueError("member_id is required")
-    
-    # Import the JIRA MCP tools here to avoid circular imports
-    try:
-        from . import mcp_jira_snowflake_list_jira_issues, mcp_jira_snowflake_get_jira_project_summary
-    except ImportError:
-        # If not available, we'll make direct calls to the actual tools
-        pass
-    
-    # Get real JIRA data for the member
-    jira_analysis = await analyze_member_jira_activity(member_id)
-    
-    # Get rover groups that include this member (we'd need to search across groups)
-    # For now, we'll indicate this needs to be implemented
-    rover_groups = [{"name": "various-groups", "role": "member", "type": "standard"}]
-    
-    # Format the response with real data
-    formatted_response = {
-        "member_id": member_id,
-        "formatted_summary": format_member_profile_summary(member_id, rover_groups, jira_analysis),
-        "raw_data": {
-            "rover_groups": rover_groups,
-            "jira_projects": jira_analysis["projects_summary"],
-            "current_work": jira_analysis["current_work"],
-            "achievements": jira_analysis["achievements"],
-            "expertise": jira_analysis["expertise"],
-            "activity_level": jira_analysis["activity_level"]
-        },
-        "integration_note": "Integrated with real JIRA data from Snowflake"
-    }
-    
-    return formatted_response
-
-
 async def analyze_member_jira_activity(member_id: str) -> dict:
     """Analyze real JIRA activity for a specific member using MCP tools."""
     
